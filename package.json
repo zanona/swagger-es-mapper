@@ -1,0 +1,24 @@
+{
+  "name": "swagger-es-mapper",
+  "version": "0.1.0",
+  "description": "Export Swagger definitions into Elasticsearch mappings",
+  "main": "index.js",
+  "bin": {
+    "swagger-es-mapper": "cli.js"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Marcus Zanona <zanona@me.com>",
+  "license": "ISC",
+  "dependencies": {},
+  "devDependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/zanona/swagger-es-mapper.git"
+  },
+  "bugs": {
+    "url": "https://github.com/zanona/swagger-es-mapper/issues"
+  },
+  "homepage": "https://github.com/zanona/swagger-es-mapper#readme"
+}
