@@ -3,9 +3,7 @@
   "version": "0.1.0",
   "description": "Export Swagger definitions into Elasticsearch mappings",
   "main": "index.js",
-  "bin": {
-    "swagger-es-mapper": "cli.js"
-  },
+  "bin": "cli.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
