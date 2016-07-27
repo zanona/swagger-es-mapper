@@ -34,6 +34,13 @@ module.exports = function (defs) {
       field.index = 'no';
     }
     Object.assign(field, oField['x-es']);
+
+    // ENABLE DOC_VALUES ON
+    // NUMERIC, DATE, BOOLEAN, BINARY, GEO AND NOT-ANALYZED STRINGS
+    // BY DEFAULT
+    if (field.index === 'not_analyzed'
+     || field.type.match(/byte|short|integer|long|float|double|boolean|date|geo/)
+    ) { field.doc_values = true; }
   }
   function parseProps(props, oProps) {
     Object.keys(oProps).forEach(function (fieldName) {
