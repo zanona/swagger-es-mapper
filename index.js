@@ -1,4 +1,4 @@
-module.exports = function (defs) {
+module.exports = function (defs, type) {
   const mappings = {};
   function parseField(field, oField) {
     const oFormat = oField.format || '',
@@ -20,27 +20,20 @@ module.exports = function (defs) {
     }
 
     field.type = fieldType;
+    if (oFormat.match(/^geo_/))          { field.type  =  oFormat; }
+    if (oFormat.match(/date|date-time/)) { field.type  = 'date'; }
+    if (oFormat.match(/uuid|email/))     { field.index = 'not_analyzed'; }
+    if (oFormat === 'uri')               { field.index = 'no'; }
 
-    if (oFormat.match(/^geo_/)) {
-      field.type = oFormat;
-    }
-    if (oFormat.match(/date|date-time/)) {
-      field.type = 'date';
-    }
-    if (oFormat.match(/uuid|email/)) {
-      field.index = 'not_analyzed';
-    }
-    if (oFormat === 'uri') {
-      field.index = 'no';
-    }
     Object.assign(field, oField['x-es']);
 
     // ENABLE DOC_VALUES ON
     // NUMERIC, DATE, BOOLEAN, BINARY, GEO AND NOT-ANALYZED STRINGS
     // BY DEFAULT
-    if (field.index === 'not_analyzed'
-     || field.type.match(/byte|short|integer|long|float|double|boolean|date|geo/)
-    ) { field.doc_values = true; }
+    // NO NEED IN ES 2.x
+    // if (field.index === 'not_analyzed'
+    //  || field.type.match(/byte|short|integer|long|float|double|boolean|date|geo/)
+    // ) { field.doc_values = true; }
   }
   function parseProps(props, oProps) {
     Object.keys(oProps).forEach(function (fieldName) {
@@ -50,19 +43,20 @@ module.exports = function (defs) {
       parseField(field, oField);
     });
   }
-  Object.keys(defs).forEach(function (type) {
-    mappings[type.toLowerCase()] = {};
-    const model = mappings[type.toLowerCase()];
+  function parseType($type) {
+    mappings[$type.toLowerCase()] = {};
+    const model = mappings[$type.toLowerCase()];
     var props, oProps;
 
     //Add before properties so es attrs are displayed first
-    Object.assign(model, defs[type]['x-es']);
+    Object.assign(model, defs[$type]['x-es']);
 
     model.properties = {};
     props = model.properties;
-    oProps = defs[type].properties;
+    oProps = defs[$type].properties;
 
     parseProps(props, oProps);
-  });
-  return { mappings: mappings };
+  }
+  type ? parseType(type) : Object.keys(defs).forEach(parseType);
+  return { mappings };
 };
