@@ -36,10 +36,14 @@ module.exports = function (defs, type) {
     // ) { field.doc_values = true; }
   }
   function parseProps(props, oProps) {
-    Object.keys(oProps).forEach(function (fieldName) {
+    Object.keys(oProps).forEach((fieldName) => {
       props[fieldName] = {};
       const field = props[fieldName],
             oField = oProps[fieldName];
+      if (oField['x-es'] && oField['x-es'].type === 'completion') {
+        props[fieldName] = Object.assign(field, oField['x-es']);
+        return;
+      }
       parseField(field, oField);
     });
   }
