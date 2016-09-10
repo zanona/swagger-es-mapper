@@ -20,6 +20,7 @@ module.exports = function (defs, type) {
     }
 
     field.type = fieldType;
+    if (oFormat.match(/float|double|byte|integer|long/)) { field.type = oFormat; }
     if (oFormat.match(/^geo_/))          { field.type  =  oFormat; }
     if (oFormat.match(/date|date-time/)) { field.type  = 'date'; }
     if (oFormat.match(/uuid|email/))     { field.index = 'not_analyzed'; }
