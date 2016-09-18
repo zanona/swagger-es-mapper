@@ -1,5 +1,5 @@
-module.exports = function (defs, type) {
-  const mappings = {};
+module.exports = function (defs, type, defaultIndexName) {
+  const output = {};
   function parseField(field, oField) {
     const oFormat = oField.format || '',
           fieldType = oField.type;
@@ -49,12 +49,16 @@ module.exports = function (defs, type) {
     });
   }
   function parseType($type) {
-    mappings[$type.toLowerCase()] = {};
-    const model = mappings[$type.toLowerCase()];
-    var props, oProps;
+    var props,
+        oProps;
 
-    //Add before properties so es attrs are displayed first
-    Object.assign(model, defs[$type]['x-es']);
+    const mappingConfig = defs[$type]['x-es'] || {},
+          indexName     = defaultIndexName || mappingConfig.index || 'default',
+          index         = output[indexName] = output[indexName] || { mappings: {} },
+          model         = index.mappings[$type.toLowerCase()] = {};
+
+    delete mappingConfig.index;
+    Object.assign(model, mappingConfig);
 
     model.properties = {};
     props = model.properties;
@@ -63,5 +67,5 @@ module.exports = function (defs, type) {
     parseProps(props, oProps);
   }
   type ? parseType(type) : Object.keys(defs).forEach(parseType);
-  return { mappings };
+  return output;
 };

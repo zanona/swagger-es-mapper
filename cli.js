@@ -5,9 +5,9 @@ const path = require('path'),
       args = process.argv.splice(2),
       throughPipe = !process.stdin.isTTY;
 
-function run(schema, model) {
+function run(schema, model, indexName) {
   if (schema.definitions) {
-    console.log(JSON.stringify(map(schema.definitions, model), null, 2));
+    console.log(JSON.stringify(map(schema.definitions, model, indexName), null, 2));
   } else {
     console.error('definitions not found in schema');
   }
@@ -20,8 +20,8 @@ if (throughPipe) {
     const chunk = process.stdin.read();
     if (chunk !== null) { input += chunk; }
   });
-  process.stdin.on('end', () => run(JSON.parse(input), args[0]));
+  process.stdin.on('end', () => run(JSON.parse(input), args[0], args[1]));
 } else {
-  run(require(path.resolve(args[0]), args[1]));
+  run(require(path.resolve(args[0]), args[1], args[2]));
 }
 
